@@ -223,6 +223,7 @@ subnet_id = aws_subnet.public.id
 - Route Table
 - Security Group (Port 80 open)
 - EC2 Instance (Web Server)
+
   ![Alt text](serve-deployment.drawio.png)
 
 ---
