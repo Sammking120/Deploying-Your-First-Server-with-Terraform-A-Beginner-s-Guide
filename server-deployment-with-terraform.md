@@ -223,6 +223,7 @@ subnet_id = aws_subnet.public.id
 - Route Table
 - Security Group (Port 80 open)
 - EC2 Instance (Web Server)
+  ![Alt text](serve-deployment.drawio.png)
 
 ---
 
@@ -234,8 +235,3 @@ This project helped me understand:
 - Automating server setup with user data scripts
 
 ---
-
-## 📊 Next Steps
-- Add HTTPS (port 443)
-- Use Load Balancer
-- Deploy multiple instances
