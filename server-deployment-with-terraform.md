@@ -3,7 +3,10 @@
 ## 🚀 Introduction
 In this project, I deployed a basic web server on AWS using Terraform. This hands-on exercise helped me understand Infrastructure as Code (IaC), cloud provisioning, and automation.
 
+More importantly, it shifted my mindset from manual configuration → automated infrastructure design.
+
 ---
+
 
 ## 🧰 Tools Used
 - Terraform
@@ -11,9 +14,28 @@ In this project, I deployed a basic web server on AWS using Terraform. This hand
 - Draw.io (for architecture diagram)
 
 ---
+# Terraform Workflow
+## 🎯 Terraform Init
+Prepares Terraform environment/ initializes the project, hence setting up Terraform to run:
+
+---
+## 🎯 terraform plan
+Previews infrastructure changes:
+- Compares desired vs current state
+- Shows what will be created
+👉 Helps catch errors before deployment
+---
+## 📊 terraform apply
+Deploys infrastructure:
+- Executes the plan
+- Provisions AWS resources
+👉 This is where your infrastructure goes live
+---
 
 ## 🌍 Step 1: Provider Configuration
-
+Explanation:
+- Defines AWS as the cloud provider
+- Sets deployment region
 ```hcl
 provider "aws" {
   region = "us-east-1"
@@ -23,6 +45,8 @@ provider "aws" {
 ---
 
 ## 🌐 Step 2: Create a VPC
+- Creates an isolated network
+- CIDR block allows scalable IP allocation
 
 ```hcl
 resource "aws_vpc" "main" {
@@ -33,7 +57,8 @@ resource "aws_vpc" "main" {
 ---
 
 ## 🧩 Step 3: Create a Public Subnet
-
+- Subnet is part of the VPC
+- Automatically assigns public IPs to instances
 ```hcl
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
@@ -45,6 +70,8 @@ resource "aws_subnet" "public" {
 ---
 
 ## 🌍 Step 4: Internet Gateway
+- Enables internet communication
+- Required for public access
 
 ```hcl
 resource "aws_internet_gateway" "igw" {
@@ -55,6 +82,8 @@ resource "aws_internet_gateway" "igw" {
 ---
 
 ## 🛣️ Step 5: Route Table
+- Routes all external traffic to the internet
+- Makes subnet internet-accessible
 
 ```hcl
 resource "aws_route_table" "rt" {
@@ -70,6 +99,8 @@ resource "aws_route_table" "rt" {
 ---
 
 ## 🔗 Step 6: Associate Route Table
+- Links subnet to route table
+- Enables internet routing
 
 ```hcl
 resource "aws_route_table_association" "rta" {
@@ -81,6 +112,8 @@ resource "aws_route_table_association" "rta" {
 ---
 
 ## 🔐 Step 7: Security Group
+- Acts as a firewall
+- Allows HTTP traffic (port 80)
 
 ```hcl
 resource "aws_security_group" "web_sg" {
@@ -105,7 +138,10 @@ resource "aws_security_group" "web_sg" {
 ---
 
 ## 🖥️ Step 8: EC2 Instance
-
+- Dynamically fetches latest AMI
+- Launches EC2 instance
+- Installs and runs Apache automatically
+  
 ```hcl
 data "aws_ami" "amazon_linux" {
   most_recent = true
@@ -136,15 +172,48 @@ resource "aws_instance" "web" {
 ---
 
 ## 🌐 Step 9: Output Public IP
+- Displays public IP after deployment
+- Used to access the web server
 
 ```hcl
 output "public_ip" {
   value = aws_instance.web.public_ip
 }
 ```
+# 🛠️ Challenges & Fixes
+### ❌ 1. Security Group Not Found
 
+#### Error: InvalidGroup.NotFound
+
+#### Cause: Hardcoded Security Group ID
+
+#### Fix:
+```hcl
+pvpc_security_group_ids = [aws_security_group.web_sg.id]
+```
+### ❌ 2. Invalid AMI ID
+
+#### Error: InvalidAMIID.NotFound
+
+#### Cause: AMI not available in region
+
+#### Fix: 
+Used dynamic AMI:
+```hcl
+ami = data.aws_ami.amazon_linux.id
+```
 ---
+### ❌ 3. Subnet Not Found
 
+#### Error: InvalidSubnetID.NotFound
+
+#### Cause: Hardcoded subnet ID
+
+#### Fix: 
+```hcl
+subnet_id = aws_subnet.public.id
+```
+---
 ## 🏗️ Architecture Overview
 
 - AWS Cloud (us-east-1)
