@@ -169,17 +169,39 @@ resource "aws_instance" "web" {
 }
 ```
 
+## ⚙️ Step 9: Initialize & Deploy
+Run these commands:
+Type yes when prompted
+
+```hcl
+terraform init
+terraform plan
+terraform apply
+```
+
 ---
 
-## 🌐 Step 9: Output Public IP
+## 🌐 Step 10: Access Your Website
 - Displays public IP after deployment
 - Used to access the web server
 
 ```hcl
-output "public_ip" {
-  value = aws_instance.web.public_ip
-}
+terraform show
 ```
+**Look for:**
+```hcl
+public_ip = "X.X.X.X"
+```
+**Open in browser:**
+```hcl
+http://<your-public-ip>
+```
+You see:
+```hcl
+Hello from Terraform!
+```
+![Alt text](terraform.png)
+
 # 🛠️ Challenges & Fixes
 ### ❌ 1. Security Group Not Found
 
